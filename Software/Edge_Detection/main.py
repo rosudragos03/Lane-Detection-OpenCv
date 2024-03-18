@@ -2,7 +2,7 @@ import numpy as np
 import cv2 as cv
 
 # Incarcam videoclipul
-video_path = "C:/Users/rdrah/Desktop/Lane-Detection-OpenCv/video.mp4"
+video_path = "C:/Users/rdrah/Desktop/Lane-Detection-OpenCv/Recording/video_R_D.mp4"
 
 # Atribuim variabilei cap videoclipul
 cap = cv.VideoCapture(video_path)
