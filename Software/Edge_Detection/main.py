@@ -24,18 +24,17 @@ while True:
         frame = cv.resize(frame, (new_width, new_height))
 
         # Setează partea de sus a imaginii la culoarea neagră
-        frame[:new_height//2, :] = [0, 0, 0]
+        frame[:3*new_height//5, :] = [0, 0, 0]  # modificare aici pentru a coborî partea de sus a imaginii negre mai jos
 
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY) # imagine alb-negru
 
         edges = cv.Canny(gray, 300, 400) # creare contururi
-        # detectarea linilor albe
-        lines = cv.HoughLinesP(edges, 1, np.pi / 180, threshold=100, minLineLength=100, maxLineGap=50)
 
-        if lines is not None:
-            for line in lines:
-                x1, y1, x2, y2 = line[0]
-                cv.line(frame, (x1, y1), (x2, y2), (0, 0, 255), 2) #identificarea linilor albe
+        # Detectează contururile
+        contours, _ = cv.findContours(edges, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+
+        # Desenează contururile detectate pe imaginea originală
+        cv.drawContours(frame, contours, -1, (0, 0, 255), 2)
 
         cv.imshow('Edge Detection', edges)
         cv.imshow('Original Video', frame)  # afisare video result
@@ -54,4 +53,3 @@ while True:
 
 cap.release()  # eliberare variabila
 cv.destroyAllWindows()  # eliminare completa a tuturor ferestrelor deschise
-
