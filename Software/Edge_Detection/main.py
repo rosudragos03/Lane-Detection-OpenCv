@@ -10,10 +10,11 @@ cap = cv.VideoCapture(video_path)
 # Specificam noua rezolutie dorita
 new_width, new_height = 600, 850
 
-paused = False # verifica daca videoclipul este in pauza sau nu
+paused = False  # verifica daca videoclipul este in pauza sau nu
+frame_index = 0  # indexul curent al frame-ului
 
 while True:
-    if not paused:
+    if not paused or cv.waitKey(0) == ord('n'):
         ret, frame = cap.read()  # citeste variabila - videoul
 
         if not ret:
@@ -23,13 +24,13 @@ while True:
         # noua rezolutie
         frame = cv.resize(frame, (new_width, new_height))
 
-        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY) # imagine alb-negru
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)  # imagine alb-negru
 
-        edges = cv.Canny(gray, 300, 400) # creare contururi
+        edges = cv.Canny(gray, 300, 400)  # creare contururi
 
         # Creăm o mască pentru a aplica filtrul doar pe partea de jos a imaginii
         mask = np.zeros_like(edges)
-        mask[new_height//2 + 50:, :] = 255  # Tăiem mai jos de jumătatea imaginii
+        mask[new_height // 2 + 50:, :] = 255  # Tăiem mai jos de jumătatea imaginii
 
         # Aplicăm filtrul de contur doar pe partea de jos a imaginii folosind mască
         edges_masked = cv.bitwise_and(edges, mask)
@@ -43,11 +44,15 @@ while True:
         cv.imshow('Edge Detection', edges_masked)
         cv.imshow('Original Video', frame)  # afisare video result
 
-        key = cv.waitKey(30) 
+        key = cv.waitKey(30)
         if key == ord('q'):  # mod de încheiere al videourilor/programului
             break
         elif key == ord('p'):  # Pauză/oprire videoclip când se apasă 'p'
             paused = not paused
+        elif key == ord('n'):  # Trecere la următorul cadru când se apasă 'n'
+            frame_index += 1
+            cap.set(cv.CAP_PROP_POS_FRAMES, frame_index)
+
     else:
         key = cv.waitKey(0)  # Așteaptă tasta apăsată
         if key == ord('q'):  # mod de încheiere al videourilor/programului
@@ -56,4 +61,4 @@ while True:
             paused = not paused
 
 cap.release()  # eliberare variabila
-cv.destroyAllWindows()  # eliminare completa a tuturor ferestrelor deschise
+cv.destroyAllWindows()  # eliminare completa a tuturor ferestrelor deschise 
