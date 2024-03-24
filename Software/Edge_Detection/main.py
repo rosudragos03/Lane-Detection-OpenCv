@@ -10,7 +10,7 @@ cap = cv.VideoCapture(video_path)
 # Specificam noua rezolutie dorita
 new_width, new_height = 600, 850
 
-paused = False # verifica daca videoclpul este in pauza sa nu
+paused = False # verifica daca videoclipul este in pauza sau nu
 
 while True:
     if not paused:
@@ -23,20 +23,24 @@ while True:
         # noua rezolutie
         frame = cv.resize(frame, (new_width, new_height))
 
-        # Setează partea de sus a imaginii la culoarea neagră
-        frame[:3*new_height//5, :] = [0, 0, 0]  # modificare aici pentru a coborî partea de sus a imaginii negre mai jos
-
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY) # imagine alb-negru
 
         edges = cv.Canny(gray, 300, 400) # creare contururi
 
+        # Creăm o mască pentru a aplica filtrul doar pe partea de jos a imaginii
+        mask = np.zeros_like(edges)
+        mask[new_height//2 + 50:, :] = 255  # Tăiem mai jos de jumătatea imaginii
+
+        # Aplicăm filtrul de contur doar pe partea de jos a imaginii folosind mască
+        edges_masked = cv.bitwise_and(edges, mask)
+
         # Detectează contururile
-        contours, _ = cv.findContours(edges, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv.findContours(edges_masked, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
         # Desenează contururile detectate pe imaginea originală
         cv.drawContours(frame, contours, -1, (0, 0, 255), 2)
 
-        cv.imshow('Edge Detection', edges)
+        cv.imshow('Edge Detection', edges_masked)
         cv.imshow('Original Video', frame)  # afisare video result
 
         key = cv.waitKey(30) 
