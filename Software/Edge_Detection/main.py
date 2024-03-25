@@ -26,11 +26,11 @@ while True:
 
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)  # imagine alb-negru
 
-        edges = cv.Canny(gray, 300, 400)  # creare contururi
+        edges = cv.Canny(gray, 350, 450)  # creare contururi
 
         # Creăm o mască pentru a aplica filtrul doar pe partea de jos a imaginii
         mask = np.zeros_like(edges)
-        mask[new_height // 2 + 50:, :] = 255  # Tăiem mai jos de jumătatea imaginii
+        mask[new_height // 2 + 120:, :] = 255  # Tăiem mai jos de jumătatea imaginii
 
         # Aplicăm filtrul de contur doar pe partea de jos a imaginii folosind mască
         edges_masked = cv.bitwise_and(edges, mask)
